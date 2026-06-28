@@ -1,0 +1,7 @@
+node_modules/
+npm-debug.log*
+morning-alpha-server.log
+server-output.log
+server-error.log
+kakao-sent.json
+.env

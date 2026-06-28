@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="매일 한국시간 오전 7시에 글로벌 시장, 주요 섹터, 국내 관심종목을 정리하는 가족용 투자 공부 웹앱" />
+    <title>Morning Alpha | 07:00 가족 투자 브리핑</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section id="authOverlay" class="auth-overlay" aria-label="PIN 로그인">
+      <form id="authForm" class="auth-card">
+        <span class="brand-mark">M</span>
+        <p class="eyebrow">FAMILY ONLY</p>
+        <h1>Morning Alpha</h1>
+        <p>가족 PIN을 입력하면 투자 브리핑을 볼 수 있습니다.</p>
+        <label for="pinInput">PIN</label>
+        <input id="pinInput" name="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN 입력" required />
+        <button class="button primary" type="submit">열기</button>
+        <small id="authError" class="auth-error" role="alert"></small>
+      </form>
+    </section>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Morning Alpha 홈">
+          <span class="brand-mark">M</span>
+          <span>
+            <strong>Morning Alpha</strong>
+            <small>07:00 FAMILY MARKET BRIEFING</small>
+          </span>
+        </a>
+        <div class="top-actions">
+          <span id="marketClock" class="market-clock">서울 --:--</span>
+          <button id="notificationBtn" class="button ghost" type="button">사이트 알림만</button>
+          <button id="refreshBtn" class="button primary" type="button">지금 분석하기</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <p class="eyebrow">GOOD MORNING, INVESTOR</p>
+            <h1>오늘 시장을<br /><em>세 화면</em>으로 정리합니다</h1>
+            <p class="hero-copy">
+              현황과 관심 후보, 주요 뉴스, 주린이 공부를 탭으로 나누어
+              필요한 것만 빠르게 볼 수 있게 정리합니다.
+            </p>
+          </div>
+          <div class="briefing-card">
+            <span class="live-dot"><i></i> 다음 자동 브리핑</span>
+            <strong id="countdown">--:--:--</strong>
+            <small>매일 오전 7:00 · Asia/Seoul</small>
+          </div>
+        </section>
+
+        <section class="notice" role="note">
+          <strong>투자 주의</strong>
+          <span id="disclaimer">이 앱은 공부와 정리를 돕는 도구입니다. 매수·매도 지시가 아니며 최종 판단은 투자자 본인에게 있습니다.</span>
+        </section>
+
+        <section id="dataHealth" class="data-health" aria-live="polite">
+          <strong>데이터 상태 확인 중</strong>
+          <span>뉴스와 지수 연결 상태를 확인하고 있습니다.</span>
+        </section>
+
+        <aside id="alertMemo" class="alert-memo" aria-label="긴급사항 메모">
+          <button id="alertMemoToggle" class="alert-memo-toggle" type="button" aria-expanded="true">
+            <span aria-hidden="true">🔔</span>
+            <strong>긴급사항</strong>
+            <b id="alertMemoCount">0</b>
+          </button>
+          <div class="alert-memo-panel">
+            <div class="alert-memo-head">
+              <strong>긴급 메모</strong>
+              <small id="alertMemoSummary">문제 없음</small>
+            </div>
+            <section id="emergencyAlerts" class="emergency-alerts" aria-live="assertive"></section>
+          </div>
+        </aside>
+
+        <nav class="tabbar" aria-label="주요 화면">
+          <button class="tab-button active" type="button" data-tab="status">1. 주식 현황 및 추천</button>
+          <button class="tab-button" type="button" data-tab="news">2. 주식관련 뉴스</button>
+          <button class="tab-button" type="button" data-tab="learn">3. 주식공부</button>
+          <button class="tab-button" type="button" data-tab="ai">4. AI 투자 보조</button>
+          <button class="tab-button" type="button" data-tab="portfolio">5. 내 종목 보유 점검</button>
+        </nav>
+
+        <section id="tab-status" class="tab-panel active" data-panel="status">
+          <section id="summary" class="summary-grid" aria-label="오늘의 시장 요약">
+            <article class="metric-card">
+              <span>시장 온도</span>
+              <strong id="marketMood">분석 중</strong>
+              <div class="meter"><i id="moodMeter"></i></div>
+              <small id="marketMoodNote">데이터를 불러오고 있습니다.</small>
+            </article>
+            <article class="metric-card">
+              <span>오늘의 핵심 테마</span>
+              <strong id="topTheme">-</strong>
+              <small id="topThemeNote">산업별 이슈를 분석합니다.</small>
+            </article>
+            <article class="metric-card">
+              <span>확인한 글로벌 이슈</span>
+              <strong><b id="newsCount">0</b>건</strong>
+              <small id="updatedAt">아직 분석 전</small>
+            </article>
+            <article class="metric-card warning-card">
+              <span>주요 위험 신호</span>
+              <strong id="riskSignal">확인 중</strong>
+              <small id="riskNote">환율, 금리, 지수 변동을 확인합니다.</small>
+            </article>
+          </section>
+
+          <section id="markets" class="market-strip" aria-label="주요 시장 지수">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">MARKET SNAPSHOT</p>
+                <h2>주요 지수</h2>
+              </div>
+              <span class="section-note">전 거래일 대비</span>
+            </div>
+            <div id="marketList" class="market-list"></div>
+          </section>
+
+          <section class="status-grid">
+            <div class="main-column">
+              <section id="stocks" class="section-block">
+                <div class="section-head">
+                  <div>
+                    <p class="eyebrow">WATCHLIST</p>
+                    <h2>오늘 공부할 국내 관심 후보</h2>
+                  </div>
+                  <span class="section-note">뉴스 영향도 + 산업 모멘텀 기준</span>
+                </div>
+                <div id="stockList" class="stock-list" aria-live="polite"></div>
+              </section>
+            </div>
+
+            <aside class="side-column">
+              <section class="section-block sticky">
+                <div class="section-head">
+                  <div>
+                    <p class="eyebrow">SECTOR RADAR</p>
+                    <h2>산업별 이슈</h2>
+                  </div>
+                </div>
+                <div id="sectorList" class="sector-list"></div>
+
+                <div class="method">
+                  <strong>후보 선정 방식</strong>
+                  <p>뉴스 빈도, 산업 키워드, 주요 지수 흐름을 합쳐 관심 점수를 만듭니다. 실제 투자 전에는 재무제표, 실적 발표, 수급, 차트를 따로 확인하세요.</p>
+                </div>
+                <div class="score-guide">
+                  <strong>점수 해석표</strong>
+                  <dl>
+                    <div><dt>90점 이상</dt><dd>매수 검토 최우선</dd></div>
+                    <div><dt>80~89점</dt><dd>강한 관심</dd></div>
+                    <div><dt>70~79점</dt><dd>관심</dd></div>
+                    <div><dt>60~69점</dt><dd>관찰</dd></div>
+                    <div><dt>50~59점</dt><dd>중립</dd></div>
+                    <div><dt>50점 미만</dt><dd>보류</dd></div>
+                  </dl>
+                </div>
+              </section>
+            </aside>
+          </section>
+        </section>
+
+        <section id="tab-ai" class="tab-panel" data-panel="ai">
+          <section class="ai-board standalone" aria-label="AI 투자 보조판">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">AI ASSISTANT</p>
+                <h2>AI 투자 보조판</h2>
+              </div>
+              <span class="section-note">투자 검토 · 익절 검토 · 손절 점검</span>
+            </div>
+            <div id="aiDecisionList" class="ai-decision-list"></div>
+          </section>
+
+        </section>
+
+        <section id="tab-portfolio" class="tab-panel" data-panel="portfolio">
+          <section class="portfolio-board standalone" aria-label="내 보유종목 AI 점검">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">MY PORTFOLIO</p>
+                <h2>내 종목 보유 점검</h2>
+              </div>
+              <span class="section-note">평균단가 기준</span>
+            </div>
+            <div class="portfolio-rule-guide" aria-label="보유 종목 점검 기준">
+              <strong>AI 보유 점검 기준</strong>
+              <span>수익률 + 최근 1개월 + 최근 3개월 흐름을 함께 봅니다.</span>
+              <dl>
+                <div><dt>익절 검토</dt><dd>수익률이 크고 최근 1개월 급등이 겹친 경우</dd></div>
+                <div><dt>일부 익절 검토</dt><dd>수익 중이지만 최근 흐름이 꺾이는 경우</dd></div>
+                <div><dt>손절 점검</dt><dd>평균단가 대비 손실이 -20% 이하인 경우</dd></div>
+                <div><dt>보유 이유 재점검</dt><dd>손실이 -10% 이하이고 1개월 흐름도 약한 경우</dd></div>
+                <div><dt>데이터 확인 필요</dt><dd>ETF나 종목코드 미확인으로 현재가 계산이 안 되는 경우</dd></div>
+              </dl>
+            </div>
+            <form id="portfolioForm" class="portfolio-form" autocomplete="off">
+              <input id="portfolioEditIndex" type="hidden" value="" />
+              <label>
+                <span>종목명</span>
+                <input id="portfolioName" type="text" placeholder="예: 삼성전자" required />
+              </label>
+              <label>
+                <span>종목코드</span>
+                <input id="portfolioTicker" type="text" placeholder="예: 005930" />
+              </label>
+              <label>
+                <span>시장</span>
+                <select id="portfolioMarket">
+                  <option value="KOSPI">KOSPI</option>
+                  <option value="KOSDAQ">KOSDAQ</option>
+                  <option value="ETF">ETF</option>
+                </select>
+              </label>
+              <label>
+                <span>평균단가</span>
+                <input id="portfolioAverage" type="number" min="1" step="1" placeholder="286000" required />
+              </label>
+              <label>
+                <span>수량</span>
+                <input id="portfolioShares" type="number" min="0.0001" step="0.0001" placeholder="2" required />
+              </label>
+              <div class="portfolio-form-actions">
+                <button class="button primary" type="submit">저장하고 점검</button>
+                <button id="portfolioResetBtn" class="button ghost" type="button">입력 비우기</button>
+              </div>
+            </form>
+            <div class="portfolio-editor-head">
+              <strong>내가 입력한 보유종목</strong>
+              <span id="portfolioEditorStatus">저장된 목록 기준으로 점검합니다.</span>
+            </div>
+            <div id="portfolioEditorList" class="portfolio-editor-list"></div>
+            <div id="portfolioList" class="portfolio-list"></div>
+          </section>
+        </section>
+
+        <section id="tab-news" class="tab-panel" data-panel="news">
+          <section id="news" class="section-block">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">GLOBAL SIGNAL</p>
+                <h2>주식관련 뉴스</h2>
+              </div>
+              <div class="news-actions">
+                <span id="kakaoStatus" class="section-note">카카오 발송 대기</span>
+                <button id="kakaoSendBtn" class="button ghost" type="button">카카오톡으로 보내기</button>
+              </div>
+            </div>
+            <div id="newsList" class="news-list" aria-live="polite"></div>
+          </section>
+        </section>
+
+        <section id="tab-learn" class="tab-panel" data-panel="learn">
+          <section class="course-hero">
+            <div>
+              <p class="eyebrow">30-DAY COURSE</p>
+              <h2>오늘의 1장</h2>
+              <p id="courseIntro">유명 투자서의 핵심 원칙을 초보자용 하루 분량으로 재구성했습니다.</p>
+            </div>
+            <article id="todayCourse" class="today-course"></article>
+          </section>
+
+          <section class="learning-block">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">DAILY LESSON</p>
+                <h2>오늘의 짧은 주식 공부</h2>
+              </div>
+            </div>
+            <div id="lessonList" class="lesson-list lesson-grid"></div>
+          </section>
+
+          <section id="learn" class="section-block beginner-section">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">BEGINNER CLASS</p>
+                <h2>주린이 공부방</h2>
+              </div>
+              <span class="section-note">용어부터 접근 순서까지</span>
+            </div>
+            <div class="beginner-intro" id="beginnerIntro"></div>
+            <div class="learning-grid">
+              <article class="learning-panel">
+                <h3>주식 접근 순서</h3>
+                <div id="learningPath" class="path-list"></div>
+              </article>
+              <article class="learning-panel">
+                <h3>매수 전 체크리스트</h3>
+                <ul id="beginnerChecklist" class="check-list"></ul>
+              </article>
+            </div>
+            <article class="learning-panel glossary-panel">
+              <h3>기초 용어 사전</h3>
+              <div id="glossaryList" class="glossary-list"></div>
+            </article>
+            <article class="learning-panel">
+              <h3>초보자 습관</h3>
+              <div id="habitList" class="habit-list"></div>
+            </article>
+          </section>
+
+          <section class="section-block course-section">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">A-Z CURRICULUM</p>
+                <h2>30일 전체 목차</h2>
+              </div>
+              <span class="section-note">하루에 하나씩</span>
+            </div>
+            <div id="courseList" class="course-list"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <nav class="mobile-nav" aria-label="모바일 주요 화면">
+      <button class="tab-button active" type="button" data-tab="status">현황</button>
+      <button class="tab-button" type="button" data-tab="news">뉴스</button>
+      <button class="tab-button" type="button" data-tab="learn">공부</button>
+      <button class="tab-button" type="button" data-tab="ai">AI</button>
+      <button class="tab-button" type="button" data-tab="portfolio">보유</button>
+    </nav>
+
+    <script src="app.js"></script>
+  </body>
+</html>

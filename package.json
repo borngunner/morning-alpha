@@ -1,0 +1,13 @@
+{
+  "name": "morning-alpha-2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Morning Alpha 2.0 Vercel serverless market briefing app.",
+  "scripts": {
+    "dev": "vercel dev",
+    "check": "node scripts/verify-serverless-boundaries.js && node --check public/app.js && node --check services/morningAlphaCore.cjs && node --check services/reportService.js && node --check services/kakaoService.js && node --check lib/http.js && node --check lib/session.js && node --check api/health.js && node --check api/login.js && node --check api/logout.js && node --check api/session.js && node --check api/report.js && node --check api/portfolio/analyze.js && node --check api/kakao/status.js && node --check api/kakao/send-today.js && node --check api/cron/morning-report.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
